@@ -2,5 +2,16 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "github>ducretje/renovate"
+  ],
+  "regexManagers": [
+    {
+      "fileMatch": [
+        "^docker/.*Dockerfile$"
+      ],
+      "matchStrings": [
+        "#*renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?) versioning=(?<versioning>.*?)\nENV .*_VER (?<currentValue>.*?)\n"
+      ],
+      "versioningTemplate": "{{#if versioning}}{{versioning}}{{else}}semver{{/if}}"
+    }
   ]
 }
