@@ -1,12 +1,13 @@
 
-# Récupère le tag passé en argument
+# Set tag for the docker image
 TAG ?= v1.40.0
+# Set architecture for the docker image
+ARCH ?= "amd64"
 
 all: build clean
 test: test2 clean
 publish: build push clean
 
-# Clone le repo LocalAI sur le tag spécifié
 clone:
 	@echo "\033[34m Cloning LocalAI repository...\033[0m"
 	@set -e;
@@ -14,12 +15,11 @@ clone:
 	&& echo "\033[32m Repository successfully cloned\033[0m" \
 	|| echo "\033[31m Error during the repository clone\033[0m"
 
-# Construit l'image Docker à partir du tag spécifié
 build: clone
 	@echo "\033[34m Building Docker Image\033[0m"
 	@set -e;
 	@docker buildx create --use
-	@docker buildx build --platform linux/amd64,linux/arm64 -t localai:$(TAG) LocalAI \
+	@docker buildx build --platform $(ARCH) -t localai:$(TAG) LocalAI \
 	&& echo "\033[32m Build successful\033[0m" \
 	|| echo "\033[31m Error during build\033[0m"
 
@@ -62,7 +62,6 @@ test2: test1
 	&& echo "\033[32m\n Successfully prompted LocalAI\033[0m" \
 	|| echo "\033[31m\n Failed to to prompt LocalAI\033[0m"
 
-# Nettoie le répertoire de travail
 clean:
 	@echo "\033[34m Cleaning working directory\033[0m"
 	@rm -rf LocalAI
