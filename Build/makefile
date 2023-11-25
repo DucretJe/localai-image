@@ -2,7 +2,9 @@
 # Récupère le tag passé en argument
 TAG ?= v1.40.0
 
-all: clone build clean
+all: build clean
+test: test2 clean
+publish: build push clean
 
 # Clone le repo LocalAI sur le tag spécifié
 clone:
@@ -13,7 +15,7 @@ clone:
 	|| echo "\033[31m Error during the repository clone\033[0m"
 
 # Construit l'image Docker à partir du tag spécifié
-build:
+build: clone
 	@echo "\033[34m Building Docker Image\033[0m"
 	@set -e;
 	@docker buildx create --use
@@ -79,4 +81,4 @@ push:
 	&& echo "\033[32m Docker image pushed to ghcr.io\033[0m" \
 	|| echo "\033[31m Error during Docker image push\033[0m"
 
-.PHONY: all clone build clean test1 test2 push
+.PHONY: all test publish clone build startcontainer clean test1 test2 push
