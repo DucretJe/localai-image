@@ -21,7 +21,7 @@ build:
 	&& echo "\033[32m Build successful\033[0m" \
 	|| echo "\033[31m Error during build\033[0m"
 
-startcontainer:
+startcontainer: build
 	@echo "\033[34m Test 1: Show models\033[0m"
 	@set -e;
 	@docker run --name localai-$(TAG) --rm -p 8080:8080 -d -e HUGGINGFACEHUB_API_TOKEN=<TOKEN> -e PRELOAD_MODELS='[{"url":"github:go-skynet/model-gallery/gpt4all-j.yaml"}]' localai:$(TAG)
