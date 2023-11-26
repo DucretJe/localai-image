@@ -22,6 +22,7 @@ login:
 
 clone:
 	@echo "\033[34m Cloning LocalAI repository...\033[0m"
+	@df -h
 	@set -e;
 	@git clone --branch $(TAG) https://github.com/mudler/LocalAI.git \
 	&& echo "\033[32m Repository successfully cloned\033[0m" \
@@ -38,7 +39,6 @@ build: login clone
 startcontainer: build
 	@echo "\033[34m Test 1: Show models\033[0m"
 	@set -e;
-	@df -h
 	@docker run --name localai-$(TAG)$(TEST_TAG) --rm -p 8080:8080 --platform $(ARCH) -d -e PRELOAD_MODELS='[{"url":"github:go-skynet/model-gallery/gpt4all-j.yaml"}]' --pull always localai:$(TAG)$(TEST_TAG)
 	@echo "\033[34m󰔟 Waiting for container to become ready...\033[0m"
 	@/bin/bash -c ' \
