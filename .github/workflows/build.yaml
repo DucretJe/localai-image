@@ -42,4 +42,4 @@ jobs:
       - name: Run Make publish
         working-directory: ./Build
         run: |
-          make ARCH=${{ matrix.architecture }} -f makefile publish
+          make ARCH=${{ matrix.architecture }} DOCKER_USERNAME=${{ github.repository_owner }}  DOCKER_PASSWORD=${{ secrets.GITHUB_TOKEN }}  -f makefile publish
