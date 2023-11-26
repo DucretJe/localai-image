@@ -28,10 +28,34 @@ jobs:
           sudo rm -rf /usr/share/dotnet
           sudo rm -rf "$AGENT_TOOLSDIRECTORY"
 
+      - name: Clone localai
+        run: |
+          make clone
+
+      - name: Build
+        uses: docker/build-push-action@v5
+        env:
+          BUILDX_NO_DEFAULT_ATTESTATIONS: 1
+        with:
+          context: ./LocalAI
+          platforms: ${{ matrix.architecture }}
+          load: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          provenance: false
+          tags: |
+            localai:test
+
       - name: Run Make Test
         working-directory: ./Build
         run: |
-          make ARCH=${{ matrix.architecture }} DOCKER_USERNAME=${{ github.repository_owner }}  DOCKER_PASSWORD=${{ secrets.GITHUB_TOKEN }} -f makefile test2
+          make ARCH=${{ matrix.architecture }} DOCKER_USERNAME=${{ github.repository_owner }}  DOCKER_PASSWORD=${{ secrets.GITHUB_TOKEN }} -f makefile test
+
+
+      # - name: Run Make Test
+      #   working-directory: ./Build
+      #   run: |
+      #     make ARCH=${{ matrix.architecture }} DOCKER_USERNAME=${{ github.repository_owner }}  DOCKER_PASSWORD=${{ secrets.GITHUB_TOKEN }} -f makefile test2
 
       - name: 🧹 Delete test packages
         uses: actions/delete-package-versions@v4
