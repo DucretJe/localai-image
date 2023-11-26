@@ -23,10 +23,10 @@ build: clone
 	&& echo "\033[32m Build successful\033[0m" \
 	|| echo "\033[31m Error during build\033[0m"
 
+# @docker run --name localai-$(TAG) --rm -p 8080:8080 -d -e PRELOAD_MODELS='[{"url":"github:go-skynet/model-gallery/gpt4all-j.yaml"}]' localai:$(TAG)
 startcontainer:
 	@echo "\033[34m Test 1: Show models\033[0m"
 	@set -e;
-	# @docker run --name localai-$(TAG) --rm -p 8080:8080 -d -e PRELOAD_MODELS='[{"url":"github:go-skynet/model-gallery/gpt4all-j.yaml"}]' localai:$(TAG)
 	@docker run --name localai-$(TAG) --rm -p 8080:8080 -d -e PRELOAD_MODELS='[{"url":"github:go-skynet/model-gallery/gpt4all-j.yaml"}]' ghcr.io/ducretje/localai-image:v1.40.0
 	@echo "\033[34m󰔟 Waiting for container to become ready...\033[0m"
 	@/bin/bash -c ' \
