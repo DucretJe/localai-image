@@ -1,8 +1,6 @@
 
 # Set tag for the docker image
 TAG ?= v1.40.0
-# Set test tag for the docker image
-TEST_TAG ?= ""
 # Set architecture for the docker image
 ARCH ?= "amd64"
 # Set docker username
@@ -32,19 +30,19 @@ build: login clone
 	@echo "\033[34m Building Docker Image\033[0m"
 	@set -e;
 	@docker buildx create --use
-	@docker buildx build --load --platform $(ARCH) -t ghcr.io/ducretje/localai-image:$(TAG)$(TEST_TAG) LocalAI \
+	@docker buildx build --load --platform $(ARCH) --cache-from=type=registry,ref=ghcr.io/ducretje/localai-image:cache --cache-to=type=registry,mode=max,ref=ghcr.io/ducretje/localai-image:cache -t localai:$(TAG) LocalAI \
 	&& echo "\033[32m Build successful\033[0m" \
 	|| echo "\033[31m Error during build\033[0m"
 
 startcontainer: build
 	@echo "\033[34m Test 1: Show models\033[0m"
 	@set -e;
-	@docker run --name localai-$(TAG)$(TEST_TAG) --rm -p 8080:8080 --platform $(ARCH) -d -e PRELOAD_MODELS='[{"url":"github:go-skynet/model-gallery/gpt4all-j.yaml"}]' --pull always localai:$(TAG)$(TEST_TAG)
+	@docker run --name localai-$(TAG) --rm -p 8080:8080 --platform $(ARCH) -d -e PRELOAD_MODELS='[{"url":"github:go-skynet/model-gallery/gpt4all-j.yaml"}]' --pull always localai:$(TAG)
 	@echo "\033[34m󰔟 Waiting for container to become ready...\033[0m"
 	@/bin/bash -c ' \
 		start_time=$$(date +%s); \
 		while [ $$(( $$(date +%s) - $$start_time )) -le 240 ]; do \
-			status=$$(docker inspect --format="{{.State.Health.Status}}" localai-$(TAG)$(TEST_TAG)); \
+			status=$$(docker inspect --format="{{.State.Health.Status}}" localai-$(TAG)); \
 			echo -ne "\r\033[K\033[33mContainer is: $$status ($$(( $$(date +%s) - $$start_time ))s)\033[0m"; \
 			if [ "$$status" = "healthy" ]; then \
 				echo "\033[32m\n Successfully started container\033[0m"; \

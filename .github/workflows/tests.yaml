@@ -26,7 +26,7 @@ jobs:
       - name: Run Make Test
         working-directory: ./Build
         run: |
-          make ARCH=${{ matrix.architecture }} TEST_TAG="-test" DOCKER_USERNAME=${{ github.repository_owner }}  DOCKER_PASSWORD=${{ secrets.GITHUB_TOKEN }} -f makefile test2
+          make ARCH=${{ matrix.architecture }} DOCKER_USERNAME=${{ github.repository_owner }}  DOCKER_PASSWORD=${{ secrets.GITHUB_TOKEN }} -f makefile test2
 
       - name: 🧹 Delete test packages
         uses: actions/delete-package-versions@v4
