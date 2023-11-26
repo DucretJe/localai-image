@@ -38,7 +38,7 @@ jobs:
         env:
           BUILDX_NO_DEFAULT_ATTESTATIONS: 1
         with:
-          context: ./LocalAI
+          context: ./Build/LocalAI
           platforms: ${{ matrix.architecture }}
           load: true
           cache-from: type=gha
