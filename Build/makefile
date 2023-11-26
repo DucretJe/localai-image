@@ -38,7 +38,8 @@ build: login clone
 startcontainer: build
 	@echo "\033[34m Test 1: Show models\033[0m"
 	@set -e;
-	@docker run --name localai-$(TAG)$(TEST_TAG) --rm -p 8080:8080 -d -e PRELOAD_MODELS='[{"url":"github:go-skynet/model-gallery/gpt4all-j.yaml"}]' --pull always localai:$(TAG)$(TEST_TAG)
+	@df -h
+	@docker run --name localai-$(TAG)$(TEST_TAG) --rm -p 8080:8080 --platform $(ARCH) -d -e PRELOAD_MODELS='[{"url":"github:go-skynet/model-gallery/gpt4all-j.yaml"}]' --pull always localai:$(TAG)$(TEST_TAG)
 	@echo "\033[34m󰔟 Waiting for container to become ready...\033[0m"
 	@/bin/bash -c ' \
 		start_time=$$(date +%s); \
