@@ -15,7 +15,7 @@ publish: build push clean
 login:
 	@echo "\033[34m Logging in to Docker Hub...\033[0m"
 	@set -e;
-	@echo $(DOCKER_PASSWORD) | docker login -u $(DOCKER_USERNAME) --password-stdin \
+	@echo $(DOCKER_PASSWORD) | docker login ghcr.io -u $(DOCKER_USERNAME) --password-stdin \
 	&& echo "\033[32m Successfully logged in to Docker Hub\033[0m" \
 	|| echo "\033[31m Error during Docker Hub login\033[0m"
 
