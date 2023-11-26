@@ -30,7 +30,7 @@ build: login clone
 	@echo "\033[34m Building Docker Image\033[0m"
 	@set -e;
 	@docker buildx create --use
-	@docker buildx build --load --platform $(ARCH) --cache-from=type=registry,ref=ghcr.io/ducretje/localai-image:cache --cache-to=type=registry,mode=max,ref=ghcr.io/ducretje/localai-image:cache -t localai:$(TAG) LocalAI \
+	@docker buildx build --load --platform $(ARCH) --cache-from=type=gha --cache-to=type=gha,mode=max -t localai:$(TAG) LocalAI \
 	&& echo "\033[32m Build successful\033[0m" \
 	|| echo "\033[31m Error during build\033[0m"
 
