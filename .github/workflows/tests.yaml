@@ -40,12 +40,15 @@ jobs:
         with:
           context: ./Build/LocalAI
           platforms: ${{ matrix.architecture }}
-          load: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
           provenance: false
           tags: |
             ghcr.io/ducretje/localai-image:test
+
+      - name: Check disk space
+        if: always()
+        run: df -h
 
       - name: Run Make Test
         working-directory: ./Build
