@@ -45,7 +45,7 @@ jobs:
           cache-to: type=gha,mode=max
           provenance: false
           tags: |
-            localai:test
+            ghcr.io/ducretje/localai-image:test
 
       - name: Run Make Test
         working-directory: ./Build
@@ -63,4 +63,4 @@ jobs:
         with:
           package-name: 'localai-image'
           package-type: 'container'
-          ignore-versions: '.*-test'
+          ignore-versions: '.*test.*'
