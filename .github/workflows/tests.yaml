@@ -33,6 +33,9 @@ jobs:
         run: |
           make clone
 
+      - name: DEBUG
+        run: echo "debug"
+
       - name: Build
         uses: docker/build-push-action@v5
         env:
