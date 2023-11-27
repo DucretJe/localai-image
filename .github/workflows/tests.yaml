@@ -5,12 +5,35 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        architecture: [amd64, arm64]
 
     steps:
+
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
+        with:
+          root-reserve-mb: 512
+          swap-size-mb: 1024
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
+          remove-docker-images: 'true'
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Build
+        run: |
+          echo "Free space:"
+          df -h
       - name: Checkout Repository
         uses: actions/checkout@v4
 
@@ -20,7 +43,50 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Remove unnecessary files
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+
+      - name: Clone localai
+        working-directory: ./Build
+        run: |
+          make clone
+
+      - name: DEBUG
+        run: echo "debug"
+
+      - name: Build
+        uses: docker/build-push-action@v5
+        env:
+          BUILDX_NO_DEFAULT_ATTESTATIONS: 1
+        with:
+          context: ./Build/LocalAI
+          platforms: ${{ matrix.architecture }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          provenance: false
+          tags: |
+            ghcr.io/ducretje/localai-image:test
+
+      - name: Check disk space
+        if: always()
+        run: df -h
+
       - name: Run Make Test
         working-directory: ./Build
         run: |
-          make -f makefile test2
+          make ARCH=${{ matrix.architecture }} DOCKER_USERNAME=${{ github.repository_owner }}  DOCKER_PASSWORD=${{ secrets.GITHUB_TOKEN }} -f makefile test
+
+
+      # - name: Run Make Test
+      #   working-directory: ./Build
+      #   run: |
+      #     make ARCH=${{ matrix.architecture }} DOCKER_USERNAME=${{ github.repository_owner }}  DOCKER_PASSWORD=${{ secrets.GITHUB_TOKEN }} -f makefile test2
+
+      - name: 🧹 Delete test packages
+        uses: actions/delete-package-versions@v4
+        with:
+          package-name: 'localai-image'
+          package-type: 'container'
+          ignore-versions: '.*test.*'
