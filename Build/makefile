@@ -2,7 +2,7 @@
 # Set tag for the docker image
 TAG ?= v1.40.0
 # Set architecture for the docker image
-ARCH ?= "amd64"
+ARCH ?= "linux/arm64/v8"
 # Set docker username
 DOCKER_USERNAME ?= "DucretJe"
 # Set docker password
@@ -22,7 +22,6 @@ login:
 
 clone:
 	@echo "\033[34m Cloning LocalAI repository...\033[0m"
-	@df -h
 	@set -e;
 	@cd $(WORKDIR)
 	@git clone --branch $(TAG) https://github.com/mudler/LocalAI.git \
