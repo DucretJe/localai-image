@@ -8,6 +8,8 @@ DOCKER_USERNAME ?= "DucretJe"
 # Set docker password
 DOCKER_PASSWORD ?= "PASSWORD"
 
+WORKDIR ?= "/home/runner/work/localai-image/localai-image"
+
 publish: build clean
 test: test2 clean
 
@@ -22,6 +24,7 @@ clone:
 	@echo "\033[34m Cloning LocalAI repository...\033[0m"
 	@df -h
 	@set -e;
+	@cd $(WORKDIR)
 	@git clone --branch $(TAG) https://github.com/mudler/LocalAI.git \
 	&& echo "\033[32m Repository successfully cloned\033[0m" \
 	|| echo "\033[31m Error during the repository clone\033[0m"
@@ -30,7 +33,7 @@ build: login clone
 	@echo "\033[34m Building Docker Image\033[0m"
 	@set -e;
 	@docker buildx create --use
-	@docker buildx build --load --platform $(ARCH) --cache-from=type=gha --cache-to=type=gha,mode=max -t localai:$(TAG) LocalAI \
+	@docker buildx build --load --platform $(ARCH) --cache-from=type=local,src=$(WORKDIR)/cache --cache-to=type=local,dest=$(WORKDIR)/cache -t localai:$(TAG) LocalAI \
 	&& echo "\033[32m Build successful\033[0m" \
 	|| echo "\033[31m Error during build\033[0m"
 

@@ -45,30 +45,26 @@ jobs:
         run: |
           make clone
 
-      - name: cache docker cache
-        uses: actions/cache@v1
-        with:
-          path: ${{ github.workspace }}/cache
-          key: ${{ runner.os }}-docker-${{ hashfiles('cache/**') }}
-          restore-keys: |
-            ${{ runner.os }}-docker-
+      #- name: cache docker cache
+      #  uses: actions/cache@v1
+      #  with:
+      #    path: ${{ github.workspace }}/cache
+      #    key: ${{ runner.os }}-docker-${{ hashfiles('cache/**') }}
+      #    restore-keys: |
+      #      ${{ runner.os }}-docker-
 
-      - name: Build
-        uses: docker/build-push-action@v5
-        env:
-          BUILDX_NO_DEFAULT_ATTESTATIONS: 1
-        with:
-          context: ./Build/LocalAI
-          platforms: ${{ matrix.architecture }}
-          cache-from: type=local,src=$GITHUB_WORKSPACE/cache
-          cache-to: type=local,dest=$GITHUB_WORKSPACE/cache
-          provenance: false
-          tags: |
-            ghcr.io/ducretje/localai-image:test
-
-      - name: Check disk space
-        if: always()
-        run: df -h
+      #- name: Build
+      #  uses: docker/build-push-action@v5
+      #  env:
+      #    BUILDX_NO_DEFAULT_ATTESTATIONS: 1
+      #  with:
+      #    context: ./Build/LocalAI
+      #    platforms: ${{ matrix.architecture }}
+      #    cache-from: type=local,src=$GITHUB_WORKSPACE/cache
+      #    cache-to: type=local,dest=$GITHUB_WORKSPACE/cache
+      #    provenance: false
+      #    tags: |
+      #      ghcr.io/ducretje/localai-image:test
 
       - name: Run Make Test
         working-directory: ./Build
