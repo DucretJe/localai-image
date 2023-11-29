@@ -63,7 +63,7 @@ jobs:
       - name: Run Make Test
         working-directory: ./Build
         run: |
-          make ARCH=${{ matrix.architecture }} DOCKER_USERNAME=${{ github.repository_owner }}  DOCKER_PASSWORD=${{ secrets.GITHUB_TOKEN }} -f makefile test
+          make ARCH=${{ matrix.architecture }} DOCKER_USERNAME=${{ github.repository_owner }}  DOCKER_PASSWORD=${{ secrets.GITHUB_TOKEN }} TEST_SUFFIX="-test" -f makefile test
 
       # - name: Run Make Test
       #   working-directory: ./Build
