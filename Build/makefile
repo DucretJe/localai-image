@@ -32,14 +32,14 @@ build: login clone
 	@echo "\033[34m Building Docker Image\033[0m"
 	@set -e;
 	@docker buildx create --use
-	@docker buildx build --load --platform $(ARCH) --cache-from=type=gha --cache-to=type=gha,mode=max -t ghcr.io/DucretJe/localai-image:$(TAG)$(TEST_SUFFIX) LocalAI \
+	@docker buildx build --load --platform $(ARCH) --cache-from=type=gha --cache-to=type=gha,mode=max -t ghcr.io/ducretje/localai-image:$(TAG)$(TEST_SUFFIX) LocalAI \
 	&& echo "\033[32m Build successful\033[0m" \
 	|| echo "\033[31m Error during build\033[0m"
 
 startcontainer: build
 	@echo "\033[34m Test 1: Start Container\033[0m"
 	@set -e;
-	@docker run --name localai-$(TAG) --rm -p 8080:8080 --platform $(ARCH) -d -e PRELOAD_MODELS='[{"url":"github:go-skynet/model-gallery/gpt4all-j.yaml"}]' --pull always ghcr.io/DucretJe/localai-image:$(TAG)$(TEST_SUFFIX)
+	@docker run --name localai-$(TAG) --rm -p 8080:8080 --platform $(ARCH) -d -e PRELOAD_MODELS='[{"url":"github:go-skynet/model-gallery/gpt4all-j.yaml"}]' --pull always ghcr.io/ducretje/localai-image:$(TAG)$(TEST_SUFFIX)
 	@echo "\033[34m󰔟 Waiting for container to become ready...\033[0m"
 	@/bin/bash -c ' \
 		start_time=$$(date +%s); \
