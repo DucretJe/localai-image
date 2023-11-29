@@ -37,3 +37,5 @@ MBP Intel
 * 11m4s first run
 * 2m21s second run
 
+MBP M3 Max
+
