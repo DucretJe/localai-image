@@ -59,4 +59,4 @@ jobs:
         with:
           version-pattern: "^.*-test$" # The regex needs to be escaped!
           names: |
-            package
+            localai-image
