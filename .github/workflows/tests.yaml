@@ -50,7 +50,7 @@ jobs:
       - name: 🧹 Delete test packages
         uses: actions/delete-package-versions@v4
         with:
-          package-name: 'localai-image/localai-image'
+          package-name: 'localai-image'
           package-type: 'container'
           min-versions-to-keep: 0
           ignore-versions: '^v[0-9]*.[0-9]*.[0-9]*$'
