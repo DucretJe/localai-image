@@ -22,20 +22,3 @@ curl http://localai.orb.local/v1/completions -H "Content-Type: application/json"
      "temperature": 0.7
    }'
 ```
-
-## TODO
-
-* Build localAI
-* Write tests
-* Write CI
-
-## Benchmark
-
-8 threads
-
-MBP Intel
-* 11m4s first run
-* 2m21s second run
-
-MBP M3 Max
-

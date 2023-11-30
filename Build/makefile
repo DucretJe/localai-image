@@ -32,7 +32,7 @@ build: login clone
 	@echo "\033[34m Building Docker Image\033[0m"
 	@set -e;
 	@docker buildx create --use
-	@docker buildx build --push --platform $(ARCH) --cache-from=type=gha --cache-to=type=gha,mode=max -t ghcr.io/ducretje/localai-image:$(TAG)$(TEST_SUFFIX) LocalAI \
+	@docker buildx build --push --provenance=false --platform $(ARCH) --cache-from=type=gha --cache-to=type=gha,mode=max -t ghcr.io/ducretje/localai-image:$(TAG)$(TEST_SUFFIX) LocalAI \
 	&& echo "\033[32m Build successful\033[0m" \
 	|| echo "\033[31m Error during build\033[0m"
 
@@ -74,6 +74,15 @@ test2: test1
 	-d '{"model": "gpt4all-j", "messages": [{"role": "user", "content": "How are you?"}],"temperature": 0.9}' | grep -q '"created":' \
 	&& echo "\033[32m\n Successfully prompted LocalAI\033[0m" \
 	|| echo "\033[31m\n Failed to to prompt LocalAI\033[0m"
+
+publish: build
+	@echo "\033[34m Publishing Docker Image\033[0m"
+	@set -e;
+	@docker tag ghcr.io/ducretje/localai-image:$(TAG) ghcr.io/ducretje/localai-image:latest
+	@docker push ghcr.io/ducretje/localai-image:latest \
+	&& echo "\033[32m Successfully pushed latest tag\033[0m" \
+	|| echo "\033[31m Failed to push latest tag\033[0m"
+
 
 clean:
 	@echo "\033[34m Cleaning working directory\033[0m"

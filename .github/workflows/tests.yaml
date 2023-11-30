@@ -39,40 +39,18 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      #- name: cache docker cache
-      #  uses: actions/cache@v1
-      #  with:
-      #    path: ${{ github.workspace }}/cache
-      #    key: ${{ runner.os }}-docker-${{ hashfiles('cache/**') }}
-      #    restore-keys: |
-      #      ${{ runner.os }}-docker-
-
-      #- name: Build
-      #  uses: docker/build-push-action@v5
-      #  env:
-      #    BUILDX_NO_DEFAULT_ATTESTATIONS: 1
-      #  with:
-      #    context: ./Build/LocalAI
-      #    platforms: ${{ matrix.architecture }}
-      #    cache-from: type=local,src=$GITHUB_WORKSPACE/cache
-      #    cache-to: type=local,dest=$GITHUB_WORKSPACE/cache
-      #    provenance: false
-      #    tags: |
-      #      ghcr.io/ducretje/localai-image:test
-
       - name: Run Make Test
         working-directory: ./Build
         run: |
           make ARCH=${{ matrix.architecture }} DOCKER_USERNAME=${{ github.repository_owner }}  DOCKER_PASSWORD=${{ secrets.GITHUB_TOKEN }} TEST_SUFFIX="-test" -f makefile test
 
-      # - name: Run Make Test
-      #   working-directory: ./Build
-      #   run: |
-      #     make ARCH=${{ matrix.architecture }} DOCKER_USERNAME=${{ github.repository_owner }}  DOCKER_PASSWORD=${{ secrets.GITHUB_TOKEN }} -f makefile test2
-
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
       - name: 🧹 Delete test packages
         uses: actions/delete-package-versions@v4
         with:
+          package-version-ids: '*-test'
           package-name: 'localai-image'
           package-type: 'container'
           ignore-versions: '.*test.*'
