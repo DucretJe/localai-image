@@ -59,7 +59,7 @@ jobs:
         with:
           keep: 0
           dry-run: true
-          user: DucretJe
+          owner: DucretJe
           repo: localai-image
           names: |
             localai-image
