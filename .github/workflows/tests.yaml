@@ -47,10 +47,16 @@ jobs:
   cleanup:
     runs-on: ubuntu-latest
     steps:
+      #- name: 🧹 Delete test packages
+      #  uses: actions/delete-package-versions@v4
+      #  with:
+      #    package-version-ids: '*-test'
+      #    package-name: 'localai-image'
+      #    package-type: 'container'
+
       - name: 🧹 Delete test packages
-        uses: actions/delete-package-versions@v4
+        uses: jackhowa/delete-github-package-versions@v0.4.9
         with:
-          package-version-ids: '*-test'
-          package-name: 'localai-image'
-          package-type: 'container'
-          ignore-versions: '.*test.*'
+          version-pattern: "^.*-test$" # The regex needs to be escaped!
+          names: |
+            package
