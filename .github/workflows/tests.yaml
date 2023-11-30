@@ -47,19 +47,11 @@ jobs:
   cleanup:
     runs-on: ubuntu-latest
     steps:
-      #- name: 🧹 Delete test packages
-      #  uses: actions/delete-package-versions@v4
-      #  with:
-      #    package-version-ids: '*-test'
-      #    package-name: 'localai-image'
-      #    package-type: 'container'
-
       - name: 🧹 Delete test packages
-        uses: jackhowa/delete-github-package-versions@v0.4.9
+        uses: actions/delete-package-versions@v4
         with:
-          keep: 0
-          dry-run: true
-          owner: DucretJe
-          repo: localai-image
-          names: |
-            localai-image
+          package-name: 'localai-image'
+          package-type: 'container'
+          min-versions-to-keep: 0
+          ignore-versions: '^v\\d.\\d.\\d$'
+
