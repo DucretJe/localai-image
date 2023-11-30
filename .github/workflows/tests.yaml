@@ -58,5 +58,6 @@ jobs:
         uses: jackhowa/delete-github-package-versions@v0.4.9
         with:
           version-pattern: "^.*-test$" # The regex needs to be escaped!
+          keep: 0
           names: |
             localai-image
