@@ -47,7 +47,7 @@ jobs:
   cleanup:
     runs-on: ubuntu-latest
     steps:
-      - name: 🧹 Delete test packages
+      - name: 🧹 Delete test package
         uses: actions/delete-package-versions@v4
         with:
           package-name: 'localai-image'
