@@ -10,8 +10,7 @@ DOCKER_USERNAME ?= "DucretJe"
 # Set docker password
 DOCKER_PASSWORD ?= "PASSWORD"
 
-publish: build clean
-test: test2 clean
+test: test1 clean
 
 login:
 	@echo "\033[34m Logging in to Docker Hub...\033[0m"
@@ -36,7 +35,7 @@ build: login clone
 	&& echo "\033[32m Build successful\033[0m" \
 	|| echo "\033[31m Error during build\033[0m"
 
-startcontainer: build
+startcontainer:
 	@echo "\033[34m Test 1: Start Container\033[0m"
 	@set -e;
 	@docker run --name localai-$(TAG) --rm -p 8080:8080 --platform $(ARCH) -d -e PRELOAD_MODELS='[{"url":"github:go-skynet/model-gallery/gpt4all-j.yaml"}]' --pull always ghcr.io/ducretje/localai-image:$(TAG)$(TEST_SUFFIX)
