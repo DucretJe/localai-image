@@ -40,7 +40,7 @@ docker run --rm --name k8sgpt --network host -v ~/Desktop/k8sgpt.yaml:/home/root
 
 > Current time on M3 Max v1.40.0 : 55s first run (1 issue), 45s second run
 
-### Chat 
+### Chat
 
 * Run the image
 
@@ -63,7 +63,7 @@ curl http://localai.orb.local/v1/completions -H "Content-Type: application/json"
      "temperature": 0.7
    }'
 ```
-> Current time on M3 Max v1.40.0 : 26s first run, 25s second run 
+> Current time on M3 Max v1.40.0 : 26s first run, 25s second run
 
 ## Working models
 
@@ -71,7 +71,7 @@ curl http://localai.orb.local/v1/completions -H "Content-Type: application/json"
 
 | Model    | ChatBot    | K8sGPT    |
 |---------------- | --------------- | --------------- |
-| [Falcon-40b](https://huggingface.co/YokaiKoibito/falcon-40b-GGUF)   `falcon-40b-Q4_K_S.gguf` | Ok but slow    | NOK    |
+| [Falcon-40b](https://huggingface.co/YokaiKoibito/falcon-40b-GGUF)   `falcon-40b-Q4_K_S.gguf` | OK but slow    | NOK    |
 | [Llama-13b](TheBloke/open-llama-13b-open-instruct-GGML) `open-llama-13b-open-instruct.ggmlv3.q3_K_S.bin
-` |  | OK | 
+` |  | OK |
 
