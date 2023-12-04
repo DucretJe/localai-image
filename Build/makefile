@@ -5,6 +5,7 @@ TAG ?= v1.40.0
 TEST_SUFFIX ?= ""
 # Set architecture for the docker image
 ARCH ?= "linux/arm64/v8"
+ARCH_TAG := $(echo $(ARCH) | awk -F/ '{print $$2}')
 # Set docker username
 DOCKER_USERNAME ?= "DucretJe"
 # Set docker password
