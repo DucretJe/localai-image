@@ -72,6 +72,6 @@ curl http://localai.orb.local/v1/completions -H "Content-Type: application/json"
 | Model    | ChatBot    | K8sGPT    |
 |---------------- | --------------- | --------------- |
 | [Falcon-40b](https://huggingface.co/YokaiKoibito/falcon-40b-GGUF)   `falcon-40b-Q4_K_S.gguf` | OK but slow    | NOK    |
-| [Llama-13b](TheBloke/open-llama-13b-open-instruct-GGML) `open-llama-13b-open-instruct.ggmlv3.q3_K_S.bin
-` |  | OK |
+| [Llama-13b](TheBloke/open-llama-13b-open-instruct-GGML) `open-llama-13b-open-instruct.ggmlv3.q3_K_S.bin` | OK | OK |
+| [Lila-70b](https://huggingface.co/TheBloke/Lila-70B-L2-GGUF) `lila-70b-l2.Q5_K_S.gguf` | OK but slow | OK but slow  |
 

@@ -31,14 +31,14 @@ build: login clone
 	@echo "\033[34m Building Docker Image\033[0m"
 	@set -e;
 	@docker buildx create --use
-	@docker buildx build --push --provenance=false --platform $(ARCH) --cache-from=type=gha --cache-to=type=gha,mode=max -t ghcr.io/ducretje/localai-image:$(TAG)$(TEST_SUFFIX) LocalAI \
+	@docker buildx build --push --provenance=false --platform $(ARCH) --cache-from=type=gha --cache-to=type=gha,mode=max -t ghcr.io/ducretje/localai-image:$(TAG)$(TEST_SUFFIX)-$(ARCH) LocalAI \
 	&& echo "\033[32m Build successful\033[0m" \
 	|| echo "\033[31m Error during build\033[0m"
 
 startcontainer:
 	@echo "\033[34m Test 1: Start Container\033[0m"
 	@set -e;
-	@docker run --name localai-$(TAG) --rm -p 8080:8080 --platform $(ARCH) -d -e PRELOAD_MODELS='[{"url":"github:go-skynet/model-gallery/gpt4all-j.yaml"}]' --pull always ghcr.io/ducretje/localai-image:$(TAG)$(TEST_SUFFIX)
+	@docker run --name localai-$(TAG) --rm -p 8080:8080 --platform $(ARCH) -d -e PRELOAD_MODELS='[{"url":"github:go-skynet/model-gallery/gpt4all-j.yaml"}]' --pull always ghcr.io/ducretje/localai-image:$(TAG)$(TEST_SUFFIX)-$(ARCH)
 	@echo "\033[34m󰔟 Waiting for container to become ready...\033[0m"
 	@/bin/bash -c ' \
 		start_time=$$(date +%s); \
@@ -82,6 +82,12 @@ publish: build
 	&& echo "\033[32m Successfully pushed latest tag\033[0m" \
 	|| echo "\033[31m Failed to push latest tag\033[0m"
 
+manifest: login
+	@echo "\033[34m Creating Docker Manifest\033[0m"
+	@docker manifest create ghcr.io/ducretje/localai-image:$(TAG)$(TEST_SUFFIX) \
+		ghcr.io/ducretje/localai-image:$(TAG)$(TEST_SUFFIX)-amd64 \
+		ghcr.io/ducretje/localai-image:$(TAG)$(TEST_SUFFIX)-linux/arm64/v8
+	@docker manifest push ghcr.io/ducretje/localai-image:$(TAG)$(TEST_SUFFIX)
 
 clean:
 	@echo "\033[34m Cleaning working directory\033[0m"
@@ -92,4 +98,4 @@ clean:
 	&& echo "\033[32m Docker build context cleaned\033[0m" \
 	|| echo "\033[31m Error during Docker build context cleanup\033[0m"
 
-.PHONY: all test publish clone build startcontainer clean test1 test2 push
+.PHONY: all test publish clone build startcontainer clean test1 test2 push manifest
