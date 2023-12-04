@@ -8,32 +8,25 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        architecture: [amd64, arm64]
+        architecture: [amd64, linux/arm64/v8]
 
     steps:
 
       - name: Maximize build space
         uses: easimon/maximize-build-space@master
         with:
-          root-reserve-mb: 512
-          swap-size-mb: 1024
+          root-reserve-mb: 46800
+          swap-size-mb: 512
           remove-dotnet: 'true'
           remove-android: 'true'
           remove-haskell: 'true'
           remove-codeql: 'true'
           remove-docker-images: 'true'
 
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Build
-        run: |
-          echo "Free space:"
-          df -h
       - name: Checkout Repository
         uses: actions/checkout@v4
 
@@ -43,50 +36,62 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Remove unnecessary files
-        run: |
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
-
-      - name: Clone localai
+      - name: Run Make Build
         working-directory: ./Build
         run: |
-          make clone
+          make ARCH=${{ matrix.architecture }} \
+          DOCKER_USERNAME=${{ github.repository_owner }} \
+          DOCKER_PASSWORD=${{ secrets.GITHUB_TOKEN }} \
+          TEST_SUFFIX="-test" -f makefile build
 
-      - name: DEBUG
-        run: echo "debug"
+  tests:
+    runs-on: ubuntu-latest
+    needs: [build]
+    strategy:
+      matrix:
+        architecture: [amd64, linux/arm64/v8]
 
-      - name: Build
-        uses: docker/build-push-action@v5
-        env:
-          BUILDX_NO_DEFAULT_ATTESTATIONS: 1
+    steps:
+
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
         with:
-          context: ./Build/LocalAI
-          platforms: ${{ matrix.architecture }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          provenance: false
-          tags: |
-            ghcr.io/ducretje/localai-image:test
+          root-reserve-mb: 46800
+          swap-size-mb: 512
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
+          remove-docker-images: 'true'
 
-      - name: Check disk space
-        if: always()
-        run: df -h
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Run Make Test
         working-directory: ./Build
         run: |
-          make ARCH=${{ matrix.architecture }} DOCKER_USERNAME=${{ github.repository_owner }}  DOCKER_PASSWORD=${{ secrets.GITHUB_TOKEN }} -f makefile test
+          make ARCH=${{ matrix.architecture }} \
+          DOCKER_USERNAME=${{ github.repository_owner }} \
+          DOCKER_PASSWORD=${{ secrets.GITHUB_TOKEN }} \
+          TEST_SUFFIX="-test" -f makefile test
 
+  manifest:
+    runs-on: ubuntu-latest
+    needs: [tests]
+    steps:
 
-      # - name: Run Make Test
-      #   working-directory: ./Build
-      #   run: |
-      #     make ARCH=${{ matrix.architecture }} DOCKER_USERNAME=${{ github.repository_owner }}  DOCKER_PASSWORD=${{ secrets.GITHUB_TOKEN }} -f makefile test2
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - name: 🧹 Delete test packages
-        uses: actions/delete-package-versions@v4
-        with:
-          package-name: 'localai-image'
-          package-type: 'container'
-          ignore-versions: '.*test.*'
+      - name: Run Make Manifest
+        working-directory: ./Build
+        run: |
+          make DOCKER_USERNAME=${{ github.repository_owner }} \
+          DOCKER_PASSWORD=${{ secrets.GITHUB_TOKEN }} \
+          TEST_SUFFIX="-test" -f makefile manifest
