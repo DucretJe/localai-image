@@ -57,7 +57,7 @@ jobs:
         run: echo "debug"
 
       - name: Build
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         env:
           BUILDX_NO_DEFAULT_ATTESTATIONS: 1
         with:
